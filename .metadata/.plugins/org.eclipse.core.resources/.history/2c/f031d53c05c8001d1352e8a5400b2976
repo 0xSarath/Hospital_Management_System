@@ -1,0 +1,5 @@
+package com.deloitte.ms.entity;
+
+public class Doctor {
+
+}

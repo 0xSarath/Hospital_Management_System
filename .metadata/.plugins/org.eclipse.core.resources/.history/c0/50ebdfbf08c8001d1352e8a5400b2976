@@ -1,0 +1,71 @@
+package com.deloitte.ms.controller;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.deloitte.ms.entity.Doctor;
+import com.deloitte.ms.repo.DoctorRepo;
+
+
+@RestController
+@RequestMapping("/api/doctors")
+public class PostController {
+	@RequestMapping(value = "/")
+	public void redirect(HttpServletResponse response) throws IOException {
+		response.sendRedirect("/swagger-ui.html");
+	}
+
+	@Autowired
+	private DoctorRepo doctorRepository;
+
+	@GetMapping("/")
+	public List<Doctor> getAllDoctors() {
+		return doctorRepository.findAll();
+	}
+//	  
+//	  @GetMapping("/{id}") 
+//	  public ResponseEntity<Doctor>
+//	  getDoctorById(@PathVariable(value = "id") String doctorId) throws
+//	  ResourceNotFoundException { Doctor doctor =
+//	  doctorRepository.findById(doctorId) .orElseThrow(() -> new
+//	  ResourceNotFoundException("Doctor not found with id " + doctorId)); return
+//	  ResponseEntity.ok().body(doctor); }
+//	  
+//	  @PostMapping("/") public Doctor createDoctor(@Validated @RequestBody Doctor
+//	  doctor) { return doctorRepository.save(doctor); }
+//	  
+//	  @PutMapping("/{id}") public ResponseEntity<Doctor>
+//	  updateDoctor(@PathVariable(value = "id") String doctorId,@Validated @RequestBody Doctor doctorDetails) throws ResourceNotFoundException {
+//	  Doctor doctor = doctorRepository.findById(doctorId) .orElseThrow(() -> new
+//	  ResourceNotFoundException("Doctor not found with id " + doctorId));
+//	  doctor.setName(doctorDetails.getName());
+//	  doctor.setSpecialization(doctorDetails.getSpecialization());
+//	  
+//	  final Doctor updatedDoctor = doctorRepository.save(doctor); return
+//	  ResponseEntity.ok(updatedDoctor); }
+//	  
+//	  @DeleteMapping("/{id}") public ResponseEntity<Void>
+//	  deleteDoctor(@PathVariable(value = "id") String doctorId) throws
+//	  ResourceNotFoundException { Doctor doctor =
+//	  doctorRepository.findById(doctorId) .orElseThrow(() -> new
+//	  ResourceNotFoundException("Doctor not found with id " + doctorId));
+//	  
+//	  doctorRepository.delete(doctor);
+//	  
+//	  return ResponseEntity.ok().build(); } }
+	 
+}
