@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,7 +60,21 @@ public class DoctorController {
 	public Doctor addDoctors(@Valid @RequestBody Doctor doctor) {
 		return doctorRepository.save(doctor);
 	}
-
+	
+	//Update doctor details by doctorid
+	@PutMapping("/{id}")
+	public ResponseEntity<Doctor> updateById(@PathVariable(value = "id") String id ,@Valid @RequestBody() Doctor doctor) throws Exception{
+		Doctor doctor1 =  doctorRepository.findById(id).orElseThrow(()->new Exception("Doctor not found with doctorId: "+id));
+		doctor1.setName(doctor.getName());
+		doctor1.setEmail(doctor.getEmail());
+		doctor1.setSpecialization(doctor.getSpecialization());
+		doctor1.setId(id);
+		
+		Doctor updatedDoctor = doctorRepository.save(doctor); 
+		return ResponseEntity.ok().body(updatedDoctor);
+	}
+	
+	
 	@DeleteMapping("/{id}")
 	public void deleteDoctorById(@PathVariable(value = "id") String id) {
 		doctorRepository.deleteById(id);
