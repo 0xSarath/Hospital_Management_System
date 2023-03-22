@@ -2,13 +2,11 @@ package com.deloitte.ms.controller;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletResponse;
 
+//import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,12 +20,12 @@ import com.deloitte.ms.repo.DoctorRepo;
 
 import springfox.documentation.annotations.ApiIgnore;
 
-@SuppressWarnings("serial")
 @RestController
 @RequestMapping("/api/doctors")
-public class DoctorController extends RuntimeException {
+public class DoctorController {
 
 	@ApiIgnore
+
 	@RequestMapping(value = "/")
 	public void redirect(HttpServletResponse response) throws IOException {
 		response.sendRedirect("/swagger-ui.html");
@@ -45,13 +43,14 @@ public class DoctorController extends RuntimeException {
 	public List<Doctor> findDoctorsBySpecialization(@PathVariable(value = "specialization") String specialization) {
 		return doctorRepository.findBySpecialization(specialization);
 	}
-	
+
 	@PostMapping("/addDoctors")
-	public Doctor addDoctors(@RequestBody Doctor doctor){
+	public Doctor addDoctors(@RequestBody Doctor doctor) {
 		return doctorRepository.save(doctor);
-}
+	}
+
 	@DeleteMapping("/{id}")
-	public void deleteDoctorById(@PathVariable(value = "id") String id){
+	public void deleteDoctorById(@PathVariable(value = "id") String id) {
 		doctorRepository.deleteById(id);
 	}
 }

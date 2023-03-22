@@ -18,14 +18,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
-@EnableMongoRepositories(basePackageClasses = DoctorRepo.class)
 public class HospitalManagementSystemApplication {
-	
-	
+
 	@Bean
 	public Docket api() {
-		return new Docket(DocumentationType
-				.SWAGGER_2).select()
+		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.withClassAnnotation(RestController.class)).paths(PathSelectors.any())
 				.build().apiInfo(apiInfo()).useDefaultResponseMessages(false);
 	}
@@ -35,6 +32,7 @@ public class HospitalManagementSystemApplication {
 		final ApiInfoBuilder builder = new ApiInfoBuilder();
 		return builder.build();
 	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(HospitalManagementSystemApplication.class, args);
 	}
