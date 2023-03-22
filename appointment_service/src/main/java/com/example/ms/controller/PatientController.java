@@ -64,7 +64,7 @@ public class PatientController {
 	//Updating Patient Details based on id
 	@PutMapping("/{id}")
 	public ResponseEntity<Patient> updatePatient(@PathVariable(value = "id") String patientId,
-			@Validated @RequestBody Patient patientDetails) throws Exception {
+			@Valid @RequestBody Patient patientDetails) throws Exception {
 		Patient patient = patientRepository.findById(patientId)
 				.orElseThrow(() -> new Exception("Patient not found with id " + patientId));
 		patient.setId(patientId);
