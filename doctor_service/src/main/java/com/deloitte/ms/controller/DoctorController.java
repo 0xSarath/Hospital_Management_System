@@ -3,6 +3,7 @@ package com.deloitte.ms.controller;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 //import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +26,6 @@ import springfox.documentation.annotations.ApiIgnore;
 public class DoctorController {
 
 	@ApiIgnore
-
 	@RequestMapping(value = "/")
 	public void redirect(HttpServletResponse response) throws IOException {
 		response.sendRedirect("/swagger-ui.html");
@@ -45,7 +45,7 @@ public class DoctorController {
 	}
 
 	@PostMapping("/addDoctors")
-	public Doctor addDoctors(@RequestBody Doctor doctor) {
+	public Doctor addDoctors(@Valid @RequestBody Doctor doctor) {
 		return doctorRepository.save(doctor);
 	}
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +36,16 @@ public class PatientController {
 	@Autowired // auto inject bean
 	private PatientRepository patientRepository;
 
+	
+	
+	//Get all Patient Details
 	@GetMapping("/")
 	public List<Patient> getAllPatients() {
 		return patientRepository.findAll();
 	}
 
+	
+	//Get Patient details based on id
 	@GetMapping("/{id}")
 	public ResponseEntity<Patient> getPatientById(@PathVariable(value = "id") String patientId) throws Exception {
 		Patient patient = patientRepository.findById(patientId)
@@ -47,25 +53,31 @@ public class PatientController {
 		return ResponseEntity.ok().body(patient);
 	}
 
+	
+	//Create a Patient
 	@PostMapping("/")
-	public Patient createPatient(@Validated @RequestBody Patient patient) {
+	public Patient createPatient(@Valid @RequestBody Patient patient) {
 		return patientRepository.save(patient);
 	}
-
+	
+	
+	//Updating Patient Details based on id
 	@PutMapping("/{id}")
 	public ResponseEntity<Patient> updatePatient(@PathVariable(value = "id") String patientId,
 			@Validated @RequestBody Patient patientDetails) throws Exception {
 		Patient patient = patientRepository.findById(patientId)
 				.orElseThrow(() -> new Exception("Patient not found with id " + patientId));
-
+		patient.setId(patientId);
 		patient.setName(patientDetails.getName());
 		patient.setGender(patientDetails.getGender());
 		patient.setAge(patientDetails.getAge());
-
+		patient.setEmail(patientDetails.getEmail());
 		Patient updatedPatient = patientRepository.save(patient);
 		return ResponseEntity.ok(updatedPatient);
 	}
-
+	
+	
+	//Deleting Patient Details based on id
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deletePatient(@PathVariable(value = "id") String patientId) throws Exception {
 		Patient patient = patientRepository.findById(patientId)

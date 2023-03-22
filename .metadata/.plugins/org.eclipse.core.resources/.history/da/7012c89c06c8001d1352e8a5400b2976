@@ -1,5 +1,0 @@
-package com.deloitte.ms.repo;
-
-public interface DoctorRepo {
-
-}
