@@ -2,6 +2,7 @@ package com.deloitte.ms.controller;
 
 import java.io.IOException;
 import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +61,13 @@ public class DoctorController {
 	@PostMapping("/addDoctors")
 	public Doctor addDoctors(@Valid @RequestBody Doctor doctor) {
 		return doctorRepository.save(doctor);
+	}
+	
+	
+	@PostMapping("/{id}")
+	public Doctor addAppointmentsByDoctorId(@Valid @PathVariable String id) throws Exception {
+		Doctor doctor2 = doctorRepository.findById(id).orElseThrow(()->new Exception("Doctor not found with doctorId: "+id));
+		return doctorRepository.save(doctor2);
 	}
 	
 	//Update doctor details by doctorid

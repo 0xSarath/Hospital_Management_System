@@ -2,13 +2,16 @@ package com.example.ms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
-import com.deloitte.ms.entity.Doctor;
-import com.deloitte.ms.repo.DoctorRepo;
+
 import com.example.ms.repo.AppointmentRepo;
 import com.example.ms.repo.PatientRepository;
 
@@ -22,8 +25,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
-@ComponentScan(basePackages = {"com.example.ms","com.deloitte.ms"})
+@ComponentScan(basePackages = {"com.example.ms"})
 @EnableMongoRepositories(basePackageClasses = { AppointmentRepo.class,PatientRepository.class})
+@EnableDiscoveryClient
 public class AppointmentServiceApplication {
 	
 	//Creating swagger for appointmentService
@@ -42,6 +46,10 @@ public class AppointmentServiceApplication {
 		return builder.build();
 	}
 	
+		@Bean
+		public RestTemplate restTemplate() {
+			return new RestTemplate();
+		}
 	public static void main(String[] args) {
 		SpringApplication.run(AppointmentServiceApplication.class, args);
 	}
