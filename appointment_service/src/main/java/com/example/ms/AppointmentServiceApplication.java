@@ -27,7 +27,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @ComponentScan(basePackages = {"com.example.ms"})
 @EnableMongoRepositories(basePackageClasses = { AppointmentRepo.class,PatientRepository.class})
-@EnableDiscoveryClient
 public class AppointmentServiceApplication {
 	
 	//Creating swagger for appointmentService

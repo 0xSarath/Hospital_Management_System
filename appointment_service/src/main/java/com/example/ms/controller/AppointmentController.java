@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -28,6 +29,9 @@ import com.example.ms.model.Doctor;
 import com.example.ms.model.Patient;
 import com.example.ms.repo.AppointmentRepo;
 import com.example.ms.repo.PatientRepository;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/api")
@@ -68,21 +72,31 @@ public class AppointmentController {
 
 	}
 	
+	
+	@GetMapping("/")
+	public ResponseEntity<List<Appointment>> getAppointmentsByDoctor(@RequestParam String doctorId) {
+		List<Appointment> appointments = appointmentRepository.getAppointmentsByDoctor(doctorId);
+		return ResponseEntity.ok(appointments);
+	}
+
 	@PutMapping("/{id}")
-	public ResponseEntity<Appointment> updateAppointmentDate(@Valid @PathVariable(value = "id") String id,@Valid @RequestBody LocalDate date) throws Exception{
-		Appointment appointment = appointmentRepository.findById(id).orElseThrow(()->new Exception("The Appointment ID is not found"));
+	public ResponseEntity<Appointment> updateAppointmentDate(@Valid @PathVariable(value = "id") String id,
+			@Valid @RequestBody LocalDate date) throws Exception {
+		Appointment appointment = appointmentRepository.findById(id)
+				.orElseThrow(() -> new Exception("The Appointment ID is not found"));
 		appointment.setDate(date);
 		appointmentRepository.save(appointment);
 		return ResponseEntity.ok(appointment);
 	}
-	
+
 	@DeleteMapping("/appointment/{id}")
-	public ResponseEntity<Void> deleteAppointmentByID(@PathVariable(value = "id") String appointmentId) throws Exception {
+	public ResponseEntity<Void> deleteAppointmentByID(@PathVariable(value = "id") String appointmentId)
+			throws Exception {
 		Appointment appointment = appointmentRepository.findById(appointmentId)
 				.orElseThrow(() -> new Exception("Patient not found with id " + appointmentId));
 
 		appointmentRepository.delete(appointment);
 		return ResponseEntity.ok().build();
 	}
-	
+
 }

@@ -20,8 +20,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 @EnableMongoRepositories(basePackageClasses = DoctorRepo.class)
-
-
 public class HospitalManagementSystemApplication {
 
 	@Bean
