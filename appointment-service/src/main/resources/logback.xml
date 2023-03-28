@@ -1,0 +1,13 @@
+<configuration>
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{YYYY-MM-DD HH:MM:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  
+  <logger name="com.deloitte" level="INFO" />
+  
+  <root level="INFO">
+    <appender-ref ref="console" />
+  </root>
+</configuration>
