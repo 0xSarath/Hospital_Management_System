@@ -53,4 +53,12 @@
 			<item value="C:\Users\saratd\Desktop\Hospital_Management_System\doctor_service"/>
 		</list>
 	</section>
+	<section name="ChooseWorkspaceDialogSettings">
+		<item key="DIALOG_X_ORIGIN" value="518"/>
+		<item key="DIALOG_Y_ORIGIN" value="209"/>
+	</section>
+	<section name="WORKBENCH_SETTINGS">
+		<list key="ENABLED_TRANSFERS">
+		</list>
+	</section>
 </section>
