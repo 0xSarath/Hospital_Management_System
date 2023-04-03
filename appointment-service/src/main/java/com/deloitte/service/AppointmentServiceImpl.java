@@ -1,14 +1,13 @@
 package com.deloitte.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import com.deloitte.exception.AppointmentException;
 import com.deloitte.exception.DoctorException;
 import com.deloitte.model.Appointment;
+import com.deloitte.model.Doctor;
 import com.deloitte.model.Patient;
 import com.deloitte.repo.AppointmentRepo;
 import com.deloitte.repo.PatientRepository;
@@ -32,15 +32,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private PatientRepository patientRepository;
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Value("${my.custom.url}")
+    private String serviceUrl;
+	
 	private static final Logger logger = LoggerFactory.getLogger(AppointmentService.class);
 	
 	
 	@Override
-	public ResponseEntity<List<Appointment>> findAllAppointments() {
+	public List<Appointment> findAllAppointments() {
 		List<Appointment> appointments = appointmentRepository.findAll();
 		if (appointments.isEmpty())
-			throw new AppointmentException(HttpStatus.NOT_FOUND.value(), "no records found");
-		return ResponseEntity.ok(appointments);
+			throw new AppointmentException(HttpStatus.NOT_FOUND.value(), "No Appointments Found");
+		return appointments;
 	}
 
 	@Override
@@ -56,38 +60,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 
 		catch (Exception e) {
-			throw new AppointmentException(HttpStatus.NO_CONTENT.value(), "Missed Some fields" + e.getMessage());
+			throw new AppointmentException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Missed Some fields " + e.getMessage());
 		}
 	}
 
-	@Override
-	public ResponseEntity<List<Appointment>> getAppointmentsByDoctor(String doctorId) {
-		List<Appointment> appointments = appointmentRepository.findAll();
-		List<Appointment> appointmentsForDoctor = new ArrayList<>();
-		for (Appointment app : appointments) {
-			if (app.getDoctor().getId().equals(doctorId)) {
-				appointmentsForDoctor.add(app);
-			}
-		}
-		if (appointmentsForDoctor.size() <= 0)
-			throw new AppointmentException(HttpStatus.NOT_FOUND.value(),
-					"Appointment not found for doctor id:" + doctorId);
-		return ResponseEntity.ok(appointmentsForDoctor);
-
-	}
 
 	@Override
-	public Object getAllDoctorDetails() throws DoctorException {
+	public List<Doctor> getAllDoctorDetails() throws DoctorException {
 		try {
-			Object response = restTemplate.exchange("http://localhost:8080/api/doctors/getAllDoctors", HttpMethod.GET,
-					null, new ParameterizedTypeReference<Object>() {
+			List<Doctor> response = restTemplate.exchange(serviceUrl, HttpMethod.GET,
+					null, new ParameterizedTypeReference<List<Doctor>>() {
 					}).getBody();
-			if (Arrays.asList(response).get(0).toString().length()==0)
+			if (response.isEmpty())
 				throw new DoctorException(HttpStatus.NOT_FOUND.value(), "No Doctors Found");
 			return response;
-		}
-		catch(DoctorException de) {
-				throw new DoctorException(HttpStatus.NOT_FOUND.value(), "No Doctors Found");
 		}
 		catch (Exception e) {
 			throw new DoctorException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Doctor Service  is down");
@@ -120,11 +106,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			return ResponseEntity.ok(appointment);
 		} catch (NoSuchElementException ne) {
 			throw new AppointmentException(HttpStatus.NOT_FOUND.value(),
-					"Appointment id does not exist " + ne.getMessage());
-		}
-
-		catch (Exception e) {
-			throw new AppointmentException(HttpStatus.NO_CONTENT.value(), "Missed Some fields" + e.getMessage());
+					"Appointment id does not exist");
 		}
 	}
 
@@ -138,5 +120,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 			throw new AppointmentException(HttpStatus.NOT_FOUND.value(),
 					"Appointment id does not exist " + ne.getMessage());
 		}
+	}
+
+	@Override
+	public List<Appointment> findByReason(String reason) {
+		// TODO Auto-generated method stub
+		List<Appointment> appointments=  appointmentRepository.findByReason(reason);
+		if(appointments.isEmpty())
+			throw new AppointmentException(HttpStatus.NOT_FOUND.value(),"No appointments Found");
+		return appointments;
 	}
 }

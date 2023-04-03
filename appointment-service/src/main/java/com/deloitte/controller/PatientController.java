@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.deloitte.model.Patient;
 import com.deloitte.service.PatientService;
 
-import springfox.documentation.annotations.ApiIgnore;
-
-@ApiIgnore
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {

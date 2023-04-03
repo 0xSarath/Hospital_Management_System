@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 
 import com.deloitte.exception.DoctorException;
 import com.deloitte.model.Appointment;
+import com.deloitte.model.Doctor;
 import com.deloitte.model.Patient;
 
 @Service
 public interface AppointmentService {
 	
-	ResponseEntity<List<Appointment>> getAppointmentsByDoctor(String doctorId);
 
-	Object getAllDoctorDetails() throws DoctorException;
+	List<Doctor> getAllDoctorDetails() throws DoctorException;
 
 	ResponseEntity<String> deleteAppointmentByID(String appointmentId) throws Exception;
 
@@ -25,5 +25,7 @@ public interface AppointmentService {
 
 	ResponseEntity<Appointment> updatePatientDetailsByAppointmentID(String appointmentId, Patient patient) throws Exception;
 
-	ResponseEntity<List<Appointment>> findAllAppointments();
+	List<Appointment> findAllAppointments();
+
+	List<Appointment> findByReason(String reason);
 }

@@ -5,7 +5,8 @@
     </encoder>
   </appender>
   
-  <logger name="com.deloitte" level="INFO" />
+  <logger name="com.deloitte" level="DEBUG" />
+  <logger name="com.deloitte" level="ERROR" />
   
   <root level="INFO">
     <appender-ref ref="console" />
