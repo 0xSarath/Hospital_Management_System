@@ -3,13 +3,12 @@ package com.deloitte.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,13 +31,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private PatientRepository patientRepository;
 	@Autowired
 	private RestTemplate restTemplate;
-	
-	@Value("${my.custom.url}")
-    private String serviceUrl;
-	
+
+	@Value("${my.url}")
+	private String serviceUrl;
+	@Value("${my.custom.url1}")
+	private String serviceUrl1;
 	private static final Logger logger = LoggerFactory.getLogger(AppointmentService.class);
-	
-	
+
 	@Override
 	public List<Appointment> findAllAppointments() {
 		List<Appointment> appointments = appointmentRepository.findAll();
@@ -49,35 +48,29 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public ResponseEntity<Appointment> createAppointment(Appointment appointment) {
-		try {
-			if (appointmentRepository.findById(appointment.getId()).isPresent()) {
-				throw new AppointmentException(HttpStatus.ALREADY_REPORTED.value(),
-						"Already the appointment id is mentioned");
-			}
-			patientRepository.save(appointment.getPatient());
-			appointmentRepository.save(appointment);
-			return ResponseEntity.ok(appointment);
+		if (appointmentRepository.findById(appointment.getId()).isPresent()) {
+			throw new AppointmentException(HttpStatus.ALREADY_REPORTED.value(),
+					"Already the appointment id is mentioned");
 		}
-
-		catch (Exception e) {
-			throw new AppointmentException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Missed Some fields " + e.getMessage());
-		}
+		String doc_id = appointment.getDoctor().getId();
+		Doctor doctor = restTemplate.getForObject(serviceUrl1 + "/" + doc_id, Doctor.class);
+		appointment.setDoctor(doctor);
+		patientRepository.save(appointment.getPatient());
+		appointmentRepository.save(appointment);
+		return ResponseEntity.ok(appointment);
 	}
 
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Doctor> getAllDoctorDetails() throws DoctorException {
+		List<Doctor> response;
 		try {
-			List<Doctor> response = restTemplate.exchange(serviceUrl, HttpMethod.GET,
-					null, new ParameterizedTypeReference<List<Doctor>>() {
-					}).getBody();
-			if (response.isEmpty())
-				throw new DoctorException(HttpStatus.NOT_FOUND.value(), "No Doctors Found");
-			return response;
-		}
-		catch (Exception e) {
+			response = restTemplate.getForObject(serviceUrl, List.class);
+
+		} catch (Exception e) {
 			throw new DoctorException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Doctor Service  is down");
 		}
+		return response;
 	}
 
 	@Override
@@ -89,7 +82,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			return ResponseEntity.ok(appointment);
 		} catch (NoSuchElementException ne) {
 			throw new AppointmentException(HttpStatus.NOT_FOUND.value(),
-					"Appointment id does not exist " + ne.getMessage());
+					"Appointment id does not exist " + id+ " not present");
 		}
 
 	}
@@ -105,8 +98,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			patientRepository.save(patient);
 			return ResponseEntity.ok(appointment);
 		} catch (NoSuchElementException ne) {
-			throw new AppointmentException(HttpStatus.NOT_FOUND.value(),
-					"Appointment id does not exist");
+			throw new AppointmentException(HttpStatus.NOT_FOUND.value(), "Appointment id "+appointmentId+" does not exist");
 		}
 	}
 
@@ -123,11 +115,17 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public List<Appointment> findByReason(String reason) {
-		// TODO Auto-generated method stub
-		List<Appointment> appointments=  appointmentRepository.findByReason(reason);
-		if(appointments.isEmpty())
-			throw new AppointmentException(HttpStatus.NOT_FOUND.value(),"No appointments Found");
-		return appointments;
+	public List<Appointment> getAppointmentsByReason(String reason) {
+		List<Appointment> appointments = appointmentRepository.findByReason(reason);
+		if (appointments.isEmpty()) {
+			throw new AppointmentException(HttpStatus.NOT_FOUND.value(), "No appointments Found");
+		} else {
+			return appointments.stream().map(appointment -> {
+				appointment.setReason(appointment.getReason());
+				return appointment;
+			}).collect(Collectors.toList());
+		}
 	}
+
+
 }

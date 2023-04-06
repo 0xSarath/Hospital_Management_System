@@ -18,8 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.deloitte.model.Patient;
 import com.deloitte.service.PatientService;
 
+import io.swagger.annotations.Api;
+import springfox.documentation.annotations.ApiIgnore;
+
 @RestController
+@ApiIgnore
 @RequestMapping("/api/patients")
+@Api(tags  = "API call for Appointment Service")
 public class PatientController {
 
 	@Autowired

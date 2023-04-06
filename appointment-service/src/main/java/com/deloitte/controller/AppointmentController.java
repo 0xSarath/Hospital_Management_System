@@ -34,7 +34,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/api")
-@Api(value = "Appointment Controller")
+@Api(tags  = "API calls for Appointment Service")
 public class AppointmentController {
 
 	@Autowired
@@ -76,7 +76,7 @@ public class AppointmentController {
 	public ResponseEntity<?> getByReason(@RequestParam(required = true) String reason) throws AppointmentException {
 		try {
 			logger.info("Getting Appointments by Reason ");
-			List<Appointment>appointments = appointmentService.findByReason(reason);
+			List<Appointment>appointments = appointmentService.getAppointmentsByReason(reason);
 			logger.info("Appointments fetches", appointments);
 			return ResponseEntity.ok(appointments);
 		} catch (AppointmentException e) {
@@ -116,13 +116,12 @@ public class AppointmentController {
 			@ApiResponse(code = 409, message = "Appointment already exists"),
 			@ApiResponse(code = 500, message = "Server error") })
 	@PostMapping("/appointments")
-	public ResponseEntity<?> createAppointment(@Valid @RequestBody Appointment appointment) throws Exception {
+	public ResponseEntity<?> createAppointment(@RequestBody Appointment appointment) throws Exception {
 		try {
 			logger.info("Appointment Creation Started");
 			ResponseEntity<Appointment> appointment1 = appointmentService.createAppointment(appointment);
 			logger.info("Created appointment Successfully: {}", appointment1);
-
-			return ResponseEntity.ok(appointment1);
+			return ResponseEntity.status(HttpStatus.OK).body(appointment1);
 		} catch (AppointmentException e) {
 			logger.error(e.getErrorMessage());
 			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(e.getErrorMessage());

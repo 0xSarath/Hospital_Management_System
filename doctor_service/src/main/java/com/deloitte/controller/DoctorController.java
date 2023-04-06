@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.deloitte.entity.Doctor;
 import com.deloitte.repo.DoctorRepo;
 
+import io.swagger.annotations.ApiModelProperty;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -49,8 +50,8 @@ public class DoctorController {
 	}
 
 	@GetMapping("/{specialization}")
-	public Doctor findDoctorsBySpecialization(@PathVariable(value = "specialization") String specialization) {
-		Doctor doctors = doctorRepository.findBySpecialization(specialization);
+	public List<Doctor> findDoctorsBySpecialization(@PathVariable(value = "specialization") String specialization) {
+		List<Doctor> doctors = doctorRepository.findBySpecialization(specialization);
 		return doctors;
 	}
 
@@ -61,6 +62,8 @@ public class DoctorController {
 
 	// Update doctor details by doctorid
 	@PutMapping("/{id}")
+	@ApiModelProperty(hidden = true)
+
 	public ResponseEntity<Doctor> updateById(@PathVariable(value = "id") String id, @Valid @RequestBody() Doctor doctor)
 			throws Exception {
 		Doctor doctor1 = doctorRepository.findById(id)

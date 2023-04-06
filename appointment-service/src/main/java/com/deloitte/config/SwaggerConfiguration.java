@@ -21,13 +21,13 @@ public class SwaggerConfiguration {
 	public Docket appointmentServiceApi() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.withClassAnnotation(RestController.class)).paths(PathSelectors.any())
-				.build().groupName("Appointment Service API").host("localhost:3002").apiInfo(apiInfo1())
+				.build().groupName("Appointment Service API").apiInfo(apiInfo1())
 				.useDefaultResponseMessages(false);
 	}
 
 	@Bean
 	public ApiInfo apiInfo1() {
 		final ApiInfoBuilder builder = new ApiInfoBuilder();
-		return builder.build();
+		return builder.title("Hospital Management System").version("1.0").build();
 	}
 }

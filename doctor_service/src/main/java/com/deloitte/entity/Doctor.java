@@ -1,6 +1,7 @@
 package com.deloitte.entity;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Id;
@@ -27,6 +28,6 @@ public class Doctor  {
 	@Email(message = "Enter a valid email")
 	private String email;
 
-	@NotNull(message = "Specialization cannot be empty")
+	@NotBlank(message = "Specialization cannot be empty")
 	private String specialization;
 }

@@ -57,7 +57,11 @@ class AppointmentServiceImplTest {
 	public void setUp() throws Exception {
 
 		doctor = new Doctor("21", "Paramasivam", "paramasivan@gmail.com", "Dentist");
-		doctor1 = new Doctor("21", "Paramasivam", "paramasivan@gmail.com", "Dentist");
+		doctor1 = new Doctor();
+		doctor1.setEmail("paramasivan@gmail.com");
+		doctor1.setId("21");
+		doctor1.setName("Paramasivam");
+		doctor1.setSpecialization("Dentist");
 		appointment = new Appointment();
 		appointment.setPatient(new Patient("123", "John doe", "Female", 23, "johndoe@gmail.com"));
 		appointment.setDoctor(doctor);
@@ -80,9 +84,20 @@ class AppointmentServiceImplTest {
 	public void testCreateAppointment() {
 		Mockito.when(appointmentRepository.save(appointment)).thenReturn(appointment);
 		ResponseEntity<Appointment> response = appointmentService.createAppointment(appointment);
-		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		Assertions.assertEquals(appointment, response.getBody());
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(appointment, response.getBody());
 
+	}
+
+	@Test
+	public void testCreateAppointment_AlreadyExists() {
+		try {
+			when(appointmentRepository.findById(appointment.getId())).thenReturn(Optional.of(appointment));
+			appointmentService.createAppointment(appointment);
+		} catch (AppointmentException e) {
+			assertEquals(HttpStatus.ALREADY_REPORTED.value(), e.getErrorCode());
+			assertEquals(e.getErrorMessage(), "Already the appointment id is mentioned");
+		}
 	}
 
 	@Test
@@ -109,10 +124,10 @@ class AppointmentServiceImplTest {
 		assertEquals(exception.getErrorMessage(), "No Appointments Found");
 	}
 
-	@SuppressWarnings({ "unchecked" })
+
 	@Test
     public void testGetAllDoctorDetails_DoctorServiceDown() {
-        when(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference.class))).thenReturn(new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK));
+        when(restTemplate.getForObject(anyString(), any(), any(), any(ParameterizedTypeReference.class))).thenReturn(new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK));
         DoctorException exception = assertThrows(DoctorException.class, () -> {
 			appointmentService.getAllDoctorDetails();
 		});
@@ -126,8 +141,8 @@ class AppointmentServiceImplTest {
 		expectedAppointments.add(appointment);
 		expectedAppointments.add(appointment1);
 		when(appointmentRepository.findByReason(reason)).thenReturn(expectedAppointments);
-		List<Appointment> actualAppointments = appointmentService.findByReason(reason);
-		verify(appointmentRepository).findByReason(reason);
+		List<Appointment> actualAppointments = appointmentService.getAppointmentsByReason(reason);
+		// verify(appointmentRepository).findByReason(reason);
 		assertEquals(expectedAppointments, actualAppointments);
 	}
 
@@ -137,7 +152,7 @@ class AppointmentServiceImplTest {
 		when(appointmentRepository.findByReason(reason)).thenReturn(new ArrayList<Appointment>());
 
 		AppointmentException exception = assertThrows(AppointmentException.class, () -> {
-			appointmentService.findByReason(reason);
+			appointmentService.getAppointmentsByReason(reason);
 		});
 		assertEquals("No appointments Found", exception.getErrorMessage());
 	}

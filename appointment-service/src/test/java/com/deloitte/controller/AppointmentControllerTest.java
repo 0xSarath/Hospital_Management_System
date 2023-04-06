@@ -87,10 +87,10 @@ class AppointmentControllerTest {
 		appointments.add(appointment);
 		appointments.add(appointment1);
 
-		Mockito.when(appointmentService.findByReason("Tooth Pain")).thenReturn(appointments);
+		Mockito.when(appointmentService.getAppointmentsByReason("Tooth Pain")).thenReturn(appointments);
 
 		ResponseEntity<?> responseEntity = appointmentController.getByReason("Tooth Pain");
-		Mockito.verify(appointmentService, Mockito.times(1)).findByReason("Tooth Pain");
+		Mockito.verify(appointmentService, Mockito.times(1)).getAppointmentsByReason("Tooth Pain");
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		assertEquals(appointments, responseEntity.getBody());
 
@@ -103,10 +103,10 @@ class AppointmentControllerTest {
 		appointments.add(appointment1);
 
 		AppointmentException exception = new AppointmentException("Appointment not found");
-		when(appointmentService.findByReason("ToothPain")).thenThrow(exception);
+		when(appointmentService.getAppointmentsByReason("ToothPain")).thenThrow(exception);
 
 		ResponseEntity<?> responseEntity = appointmentController.getByReason("ToothPain");
-		Mockito.verify(appointmentService, Mockito.times(1)).findByReason("ToothPain");
+		Mockito.verify(appointmentService, Mockito.times(1)).getAppointmentsByReason("ToothPain");
 		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 

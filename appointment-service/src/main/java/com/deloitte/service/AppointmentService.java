@@ -27,5 +27,5 @@ public interface AppointmentService {
 
 	List<Appointment> findAllAppointments();
 
-	List<Appointment> findByReason(String reason);
+	List<Appointment> getAppointmentsByReason(String reason);
 }
